@@ -1,7 +1,9 @@
 services:
   web:
     build: ./services/web
-    command: python manage.py run -h 0.0.0.0
+    command: >
+      sh -c "while ! nc -z db 5432;do sleep 1; done;
+       flask run"
     volumes:
       - ./services/web/:/usr/src/app/
     ports:
@@ -14,7 +16,7 @@ services:
   db:
     image: postgres:18
     volumes:
-      - ./var/lib/postgresql/data:/var/lib/postgresql/data
+      - ./var/lib/postgresql:/var/lib/postgresql/
     environment:
       - POSTGRES_USER=hello_flask
       - POSTGRES_PASSWORD=hello_flask
