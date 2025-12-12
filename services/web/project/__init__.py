@@ -33,7 +33,7 @@ class File(db.Model):
 # route for home page
 @app.route('/')
 def index():
-    return jsonify({'message': 'Hello from Here!'})
+    return jsonify({'message': 'Hello from Postgres and Docker!'})
 
 
     
