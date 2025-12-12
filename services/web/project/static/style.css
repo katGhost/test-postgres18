@@ -1,0 +1,25 @@
+*, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: rgba(255, 255, 255, 0.9);
+    --text-color: rgba(5, 5, 5, 0.9);
+    --btn-bg: rgba(255, 127, 80, 0.8);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text-color);
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;
+}
