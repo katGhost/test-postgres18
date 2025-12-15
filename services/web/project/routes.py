@@ -41,7 +41,7 @@ def home():
 @bp.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
-        return render_template("404.html"), 400
+        return jsonify({"error": "No file provided"}), 400
     
     
     # check for files in the folder if 'upload' folder exists
@@ -49,7 +49,7 @@ def upload_file():
 
     # empty file handling
     if file.filename == "":
-        return render_template("404.html"), 400
+        return jsonify({"error": "No file provided"}), 400
 
     upload_folder = current_app.config["UPLOAD_FOLDER"]
     os.makedirs(upload_folder, exist_ok=True)
