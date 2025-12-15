@@ -7,8 +7,8 @@
     <h2 class="mb-3 title">Upload File</h2>
     <div class="mb-3 form-container">
         <form method="POST" action="/upload" enctype="multipart/form-data">
-            <input type="file" name="file" />
-            <button type="submit">Upload</button>
+            <input type="file" name="file" class="file-input" />
+            <button type="submit" class="btn-upload">Upload</button>
         </form>
     </div>
     <div class="files-table">
@@ -40,6 +40,19 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <!-- Pagination controls -->
+        <div class="pagination-container">
+            {% if page > 1 %}
+                <a href="{{ url_for('files.home', page=page-1, per_page=per_page) }}" class="btn btn-secondary">Previous</a>
+            {% endif %}
+
+            <span>Page {{page}} of {{total_pages}}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('file.home', page=page+1, per_page=per_page) }}" class="btnbtn-secondary">Next</a>
+            {% endif %}
         </div>
     </div>
     
