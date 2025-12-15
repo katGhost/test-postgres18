@@ -9,8 +9,8 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
+    app.config.from_object("project.config.Config")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["UPLOAD_FOLDER"] = "uploads"
 
     db.init_app(app)
