@@ -1,16 +1,14 @@
 #!/bin/sh
+set -e
 
-if [ "$DATABASE" = "postgres" ]
-then
-    echo "Waiting for postgres..."
+echo "Waiting for Postgres..."
+while ! nc -z db 5432; do
+  sleep 0.2
+done
+echo "PostgreSQL is up"
 
-    while ! nc -z $SQL_HOST $SQL_PORT; do
-      sleep 0.1
-    done
+echo "Running DB setup..."
+python manage.py create_db || true
 
-    echo "PostgreSQL started"
-fi
-
-python manage.py create_db
-
-exec "$@"
+echo "Starting Flask..."
+exec flask run --host=0.0.0.0 --port=5000

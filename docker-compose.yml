@@ -1,24 +1,26 @@
 services:
+  db:
+    image: postgres:18
+    container_name: postgres18
+    environment:
+      POSTGRES_USER: hello_flask
+      POSTGRES_PASSWORD: hello_flask
+      POSTGRES_DB: hello_flask_dev
+    volumes:
+    - pgdata:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+      
   web:
     build: ./services/web
-    command: >
-      sh -c "while ! nc -z db 5432;do sleep 1; done;
-       flask run"
-    volumes:
-      - ./services/web/:/usr/src/app/
-    ports:
-      - "5001:5000"
     env_file:
       - ./.env.dev
+    volumes:
+      - ./services/web:/usr/src/app/
+    ports:
+      - "5001:5000"
     depends_on:
       - db
 
-  db:
-    image: postgres:18
-    volumes:
-      - ./var/lib/postgresql:/var/lib/postgresql/
-    environment:
-      - POSTGRES_USER=hello_flask
-      - POSTGRES_PASSWORD=hello_flask
-      - POSTGRES_DB=hello_flask_dev
-
+volumes:
+  pgdata:
