@@ -3,5 +3,16 @@
 {% block title %} File manager {% endblock %}
 
 {% block content %}
-    <h1 class="mb-3">Hello From Postgres!</h1>
+
+    <h2 class="mb-3 title">Upload File</h2>
+    <div class="form-container">
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+    <div class="files-container">
+        
+    </div>
+    
 {% endblock %}

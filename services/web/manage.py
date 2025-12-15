@@ -1,16 +1,16 @@
 from flask.cli import FlaskGroup
 
-from project import app, db
+from project import create_app, db
 
-
+app =create_app()
 cli = FlaskGroup(app)
 
 @cli.command("create_db")
 def create_db():
     """Create the databse"""
-    db.drop_all()   # make sure ot drop any existing tables
+    #db.drop_all()   # make sure ot drop any existing tables
     db.create_all()
-    db.session.commit()
+    #db.session.commit()
     print("Database created successfully!")
 
 
