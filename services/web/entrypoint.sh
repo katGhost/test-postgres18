@@ -11,4 +11,5 @@ echo "Running DB setup..."
 python manage.py create_db || true
 
 echo "Starting Flask..."
-exec flask run --host=0.0.0.0 --port=5000
+exec flask --app manage.py run --host=0.0.0.0 --port=5000
+
