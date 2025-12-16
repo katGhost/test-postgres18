@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify, current_app, render_template, \
 redirect, url_for, flash
+import os
+import math
 from .models import File
 from . import db
-import os
-from werkzeug.utils import secure_filename
-import uuid
-import math
+from .task import save_uploaded_files
+
 
 bp = Blueprint("files", __name__)
+
 
 """ Running a basic health check route -> Home"""
 @bp.route("/", methods=["GET"])
@@ -37,44 +38,31 @@ def home():
     #return {"status": "File manager running"}
 
 
-""" File upload route """
+""" File upload route / uploading files Asynchronously"""
 @bp.route("/upload", methods=["POST"])
 def upload_file():
     if "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
     
-    
     # check for files in the folder if 'upload' folder exists
     file = request.files["file"]
 
+    filename=file.filename
+
     # empty file handling
-    if file.filename == "":
+    if filename == "":
         return jsonify({"error": "No file provided"}), 400
-
-    upload_folder = current_app.config["UPLOAD_FOLDER"]
-    os.makedirs(upload_folder, exist_ok=True)
-
-    # secure filename
-    #filename = secure_filename(file.filename)
-    filename = f"{uuid.uuid4()}_{secure_filename(file.filename)}"
-    file_path = os.path.join(upload_folder, filename)
-    file.save(file_path)
-
-    # upload file
-    db_file = File(
-        filename=file.filename,
-        file_path=file_path
-    )
-
-    # add file to db and commit changes
-    db.session.add(db_file)
-    db.session.commit()
+    
+    # read bytes
+    # dispatch async task without storing unused variable and use keyword args to avoid positional mismatch
+    save_uploaded_files.delay(filename=filename, file_bytes=file.read())
 
     # if file uploaded successfully
     flash("Success: File uploaded succesfully!", "success"), 201
     return redirect(url_for("files.home"))
 
-# Delete some files
+
+"""  Endpoint for file deletion """
 @bp.route("/delete/<int:file_id>", methods=["POST"])
 def delete_file(file_id):
     # get file id from the database
@@ -99,5 +87,10 @@ def delete_file(file_id):
 
     return redirect(url_for("files.home"))
 
+""" Large file error handler """
+@bp.errorhandler(413)
+def file_too_large(error):
+    flash("Files too large"), 413
+    return redirect(url_for("files.home"))
 
     
