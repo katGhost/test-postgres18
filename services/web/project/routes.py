@@ -87,7 +87,7 @@ def delete_file(file_id):
 """ Large file error handler """
 @bp.errorhandler(413)
 def file_too_large(error):
-    flash("Files too large"), 413
+    flash("Files too large", "danger"), 413
     return redirect(url_for("files.home"))
 
     
