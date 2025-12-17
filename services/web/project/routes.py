@@ -41,21 +41,18 @@ def home():
 """ File upload route / uploading files Asynchronously"""
 @bp.route("/upload", methods=["POST"])
 def upload_file():
-    if "file" not in request.files:
+    # get file from request
+    file = request.files.get("file")
+
+    # # empty file handling
+    if "file" not in request.files or not file.filename:
         return jsonify({"error": "No file provided"}), 400
     
-    # check for files in the folder if 'upload' folder exists
-    file = request.files["file"]
-
-    filename=file.filename
-
-    # empty file handling
-    if filename == "":
-        return jsonify({"error": "No file provided"}), 400
+    data = file.read()
     
     # read bytes
     # dispatch async task without storing unused variable and use keyword args to avoid positional mismatch
-    save_uploaded_files.delay(filename=filename, file_bytes=file.read())
+    save_uploaded_files.delay(file.filename, data)
 
     # if file uploaded successfully
     flash("Success: File uploaded succesfully!", "success"), 201
