@@ -1,9 +1,9 @@
 from flask.cli import FlaskGroup
-
 from project import create_app, db
 from project.celery_app import celery
+#from project.celery_app import celery
 
-app =create_app()
+app = create_app()
 cli = FlaskGroup(app)
 
 @cli.command("create_db")
@@ -14,30 +14,24 @@ def create_db():
     #db.session.commit()
     print("Database created successfully!")
 
-""" Make the celery app availabel""" 
-"""
-celery = Celery(
-    app.import_name,
-    backend=app.config["CELERY_RESULT_BACKEND"],
-    broker=app.config["CELERY_BROKER_URL"],
-)"""
-
-# update app configuration with celery
+""" Config celery """ 
 celery.conf.update(
-    backend=app.config["CELERY_RESULT_BACKEND"],
-    broker=app.config["CELERY_BROKER_URL"],
+    broker_backend=app.config["CELERY_RESULT_BACKEND"],
+    broker_url=app.config["CELERY_BROKER_URL"]
 )
 
-#
+
 class ContextTask(celery.Task):
-    """ Ensure tasks run insde Flask app context """
     def __call__(self, *args, **kwargs):
         with app.app_context():
             return self.run(*args, **kwargs)
-        
+
 celery.Task = ContextTask
 
 
+
+
+#celery.Task = ContextTask
 
 if __name__ == "__main__":
     cli()
