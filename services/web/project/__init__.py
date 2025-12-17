@@ -2,14 +2,16 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from celery import Celery
 
+
+#celery = Celery(__name__, broker=os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0'))
 
 # Initialize the db
 db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-
     app.config.from_object("project.config.Config")
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB limit
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
@@ -27,4 +29,18 @@ def create_app():
     return app
 
 
-    
+
+
+
+
+
+
+"""TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery"""
